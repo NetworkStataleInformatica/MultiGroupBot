@@ -1,6 +1,6 @@
 <div align="center">
     <h2>Multi Group Bot</h2>
-	<img src="0.png">
+	<img src="temp_logo.png">
 	<br>
 	<br>
 	<hr>
@@ -38,6 +38,11 @@ La mia idea idea é, quindi, avere una cosa tipo
 
 Naturalmente, PRINCIPALI e PRIMO_ANNO sono esempi, non vanno hard-codati, ma ci vuole un comando da amministratore per creare degli insiemi/label. 
 
+
+Idea carina:
+punti reputazione.
+Ogni volta che uno studente risponde in modo corretto a una domanda oppure aiuta nel risolvere problemi o altro, ottiene punti reputazione.
+I punti reputazione vengono mostrati a fianco al nome ad esempio (come ruolo insomma). Potrebbe incentivare le persone ad usare i gruppi
 
 
 

@@ -21,5 +21,4 @@ dispatcher.add_handler(start_handler)
 
 # And that's all you need. To start the bot, run:
 updater.start_polling()
-
 updater.idle()
