@@ -13,6 +13,12 @@
 	</p>
     <p>
 </div>
+
+Idea carina:
+punti reputazione.
+Ogni volta che uno studente risponde in modo corretto a una domanda oppure aiuta nel risolvere problemi o altro, ottiene punti reputazione.
+I punti reputazione vengono mostrati a fianco al nome ad esempio (come ruolo insomma). Potrebbe incentivare le persone ad usare i gruppi
+
 Andrea, [23.04.20 14:03]
 Come ho detto prima a lui, scusate ma non ho davvero tempo
 
@@ -37,12 +43,6 @@ La mia idea idea é, quindi, avere una cosa tipo
 
 
 Naturalmente, PRINCIPALI e PRIMO_ANNO sono esempi, non vanno hard-codati, ma ci vuole un comando da amministratore per creare degli insiemi/label. 
-
-
-Idea carina:
-punti reputazione.
-Ogni volta che uno studente risponde in modo corretto a una domanda oppure aiuta nel risolvere problemi o altro, ottiene punti reputazione.
-I punti reputazione vengono mostrati a fianco al nome ad esempio (come ruolo insomma). Potrebbe incentivare le persone ad usare i gruppi
 
 
 
