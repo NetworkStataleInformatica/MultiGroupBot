@@ -38,7 +38,7 @@ class Database:
         )
         self.c.execute(
             "CREATE TABLE IF NOT EXISTS groups ("
-            "   group_id INTEGER PRIMARY KEY NOT NULL,"
+            "   group_id BIGINT PRIMARY KEY NOT NULL,"
             "   title TEXT NOT NULL,"
             "   invite_link TEXT,"
             "   degree_name TEXT NOT NULL DEFAULT 'informatica',"
@@ -49,11 +49,14 @@ class Database:
         self.c.execute(
             "CREATE TABLE IF NOT EXISTS users_groups ("
             "   user_id INTEGER REFERENCES users(user_id),"
-            "   group_id INTEGER REFERENCES groups(group_id)"
+            "   group_id BIGINT REFERENCES groups(group_id),"
+            "   last_seen TIMESTAMP DEFAULT now(),"
+            "   PRIMARY KEY(user_id, group_id)"
             ");"
         )
         self.conn.commit()
 
+    # Database cursor wrapper
     def exec(self, *args, **kwargs):
         self.c.execute(*args)
         self.conn.commit()
@@ -73,7 +76,36 @@ class Database:
             )
         else:
             self.exec(
-                "UPDATE users SET user_id=%s, first_name=%s, last_name=%s, username=%s, last_seen=NOW() "
+                "UPDATE users SET first_name=%s, last_name=%s, username=%s, last_seen=NOW() "
                 "WHERE user_id = %s",
-                (user.id, user.first_name, user.last_name, user.username, user.id, )
+                (user.first_name, user.last_name, user.username, user.id, )
             )
+
+    # Updates the group information in the database
+    # If the group is not in the database, it leaves
+    def update_group(self, chat, user):
+        db_group = self.exec("SELECT 1 FROM groups WHERE group_id=%s", (chat.id, ), fetch=Database.FETCH_ONE)
+        if not db_group:
+            chat.send(
+                "@admin gruppo non registrato. "
+                "Un amministratore deve registrarmi prima di aggiungermi a un gruppo. "
+                "\n<b><u>Esco dalla chat</u></b>.", syntax="html"
+            )
+            return chat.leave()
+
+        self.exec(
+            "UPDATE groups SET title=%s",
+            (chat.title, )
+        )
+        db_user_group = self.exec("SELECT 1 FROM users_groups WHERE user_id=%s AND group_id=%s",
+                                  (user.id, chat.id, ),
+                                  fetch=Database.FETCH_ONE)
+        if not db_user_group:
+            self.exec(
+                "INSERT INTO users_groups(user_id, group_id) VALUES(%s, %s)",
+                (user.id, chat.id, )
+            )
+        self.exec(
+            "UPDATE users_groups SET last_seen=NOW() WHERE user_id=%s AND group_id=%s",
+            (user.id, chat.id)
+        )
