@@ -89,7 +89,8 @@ class Database:
             chat.send(
                 "@admin gruppo non registrato. "
                 "Un amministratore deve registrarmi prima di aggiungermi a un gruppo. "
-                "\n<b><u>Esco dalla chat</u></b>.", syntax="html"
+                "\n<b><u>Esco dalla chat</u></b>."
+                f"\n\n(Chat ID: <code>{chat.id}</code>)", syntax="html"
             )
             return chat.leave()
 
@@ -109,3 +110,13 @@ class Database:
             "UPDATE users_groups SET last_seen=NOW() WHERE user_id=%s AND group_id=%s",
             (user.id, chat.id)
         )
+
+    def get_rep(self, user):
+        return self.exec(
+            "SELECT reputation FROM users WHERE user_id=%s LIMIT 1",
+            (user.id, ),
+            fetch=Database.FETCH_ONE
+        )[0]
+
+    def increase_rep(self, user):
+        self.exec("UPDATE users SET reputation=reputation+1 WHERE user_id=%s", (user.id, ))
