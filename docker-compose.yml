@@ -1,0 +1,18 @@
+version: '3'
+
+volumes:
+  postgres_data:
+
+services:
+  bot:
+    build: .
+    env_file: .env
+    container_name: networkstatale_bot
+
+  postgres:
+    image: postgres
+    env_file: .env
+    container_name: networkstatale_postgres
+    hostname: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
