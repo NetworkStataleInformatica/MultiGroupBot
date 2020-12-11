@@ -48,8 +48,8 @@ class Database:
         )
         self.c.execute(
             "CREATE TABLE IF NOT EXISTS users_groups ("
-            "   user_id INTEGER REFERENCES users(user_id),"
-            "   group_id BIGINT REFERENCES groups(group_id),"
+            "   user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,"
+            "   group_id BIGINT REFERENCES groups(group_id) ON DELETE CASCADE,"
             "   last_seen TIMESTAMP DEFAULT now(),"
             "   PRIMARY KEY(user_id, group_id)"
             ");"
@@ -88,15 +88,14 @@ class Database:
         if not db_group:
             chat.send(
                 "@admin gruppo non registrato. "
-                "Un amministratore deve registrarmi prima di aggiungermi a un gruppo. "
-                "\n<b><u>Esco dalla chat</u></b>."
+                "Un amministratore deve registrarmi con /register. "
                 f"\n\n(Chat ID: <code>{chat.id}</code>)", syntax="html"
             )
-            return chat.leave()
+            return
 
         self.exec(
-            "UPDATE groups SET title=%s",
-            (chat.title, )
+            "UPDATE groups SET title=%s WHERE group_id=%s",
+            (chat.title, chat.id, )
         )
         db_user_group = self.exec("SELECT 1 FROM users_groups WHERE user_id=%s AND group_id=%s",
                                   (user.id, chat.id, ),
