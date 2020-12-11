@@ -112,11 +112,20 @@ class Database:
         )
 
     def get_rep(self, user):
-        return self.exec(
+        res = self.exec(
             "SELECT reputation FROM users WHERE user_id=%s LIMIT 1",
             (user.id, ),
             fetch=Database.FETCH_ONE
-        )[0]
+        )
+        return -1 if not res else res[0]
 
     def increase_rep(self, user):
         self.exec("UPDATE users SET reputation=reputation+1 WHERE user_id=%s", (user.id, ))
+
+    def get_permissions_level(self, user):
+        res = self.exec(
+            "SELECT permissions_level FROM users WHERE user_id=%s LIMIT 1",
+            (user.id, ),
+            fetch=Database.FETCH_ONE
+        )
+        return -1 if not res else res[0]
