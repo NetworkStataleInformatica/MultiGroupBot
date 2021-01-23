@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS groups (
     group_id BIGINT PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
+    profile_picture BYTEA,
     invite_link TEXT,
     welcome_message TEXT
 );
