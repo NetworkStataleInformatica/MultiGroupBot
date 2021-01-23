@@ -33,17 +33,17 @@ if ($action == "ban") {
     $db->query("UPDATE users SET banned=false WHERE user_id=:id", ["id" => $target]);
 }
 
-$groups = $db->query("SELECT group_id AS id FROM users_groups WHERE user_id=:id", ["id" => $target]);
+$groups = $db->query("SELECT group_id AS id FROM users_groups WHERE user_id=:id", ["id" => $target], true);
 foreach ($groups as $group) {
     if ($action == "ban") {
         $client->kickChatMember(
-            $group,
+            $group["id"],
             $target,
         );
 
     } else if ($action == "mute") {
         $client->restrictChatMember(
-            $group,
+            $group["id"],
             $target,
             [
                 "can_send_messages" => false,
@@ -52,12 +52,12 @@ foreach ($groups as $group) {
         );
     } else if ($action == "unban" || $action == "unmute") {
         $client->unbanChatMember(
-            $group,
+            $group["id"],
             $target,
             true,
         );
         $client->restrictChatMember(
-            $group,
+            $group["id"],
             $target,
             [
                 "can_send_messages" => true,
