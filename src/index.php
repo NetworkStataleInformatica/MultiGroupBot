@@ -37,3 +37,5 @@ $db->query(
     ON CONFLICT(user_id, group_id) DO UPDATE SET user_id=:id, group_id=:gid",
     ["id" => $sender->id, "gid" => $chat->id]
 );
+
+include_once "modules/reputation.php";
