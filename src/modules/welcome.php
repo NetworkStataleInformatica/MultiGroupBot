@@ -1,6 +1,8 @@
 <?php
+include_once $_SERVER["DOCUMENT_ROOT"] . "/utils.php";
+
 global $client, $db;
-global $message, $chat;
+global $message, $chat, $update;
 
 if (!isset($message->new_chat_members)) {
     return;
@@ -13,8 +15,11 @@ if (!$db_group || !array_key_exists("exists", $db_group)) {
     return;
 }
 
-$client->sendMessage(
+$client->getMe();  // Dumb fix to an issue in the TuriBot library
+
+$res = $client->sendMessage(
     $chat->id,
     $db_group["welcome_message"],
     "html"
 );
+schedule_deletion($res->result);

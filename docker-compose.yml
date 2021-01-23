@@ -15,10 +15,12 @@ services:
     container_name: studentiunimibot_php-fpm
     working_dir: /usr/src/app/
     env_file: .env
+    environment:
+      - BOT_TOKEN
     volumes:
       - ./src:/usr/src/app/
       - ./vendor:/usr/src/vendor
-      - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.3/fpm/conf.d/99-overrides.ini
+      - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.4/fpm/conf.d/99-overrides.ini
     networks:
       - fpm_net
       - db_net
