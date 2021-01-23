@@ -1,3 +1,5 @@
 {
-  "davtur19/turibot": "*"
+  "require": {
+    "davtur19/turibot": "*"
+  }
 }

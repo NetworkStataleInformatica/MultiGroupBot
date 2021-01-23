@@ -8,8 +8,3 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get -y --install-recommends install php7.3-pgsql php7.3-redis \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
-# Sentry SDK
-WORKDIR "/application/public"
-RUN composer install
-WORKDIR "/application"
