@@ -14,6 +14,7 @@ services:
     build: phpdocker/php-fpm
     container_name: studentiunimibot_php-fpm
     working_dir: /usr/src/app/
+    env_file: .env
     volumes:
       - ./src:/usr/src/app/
       - ./vendor:/usr/src/vendor
