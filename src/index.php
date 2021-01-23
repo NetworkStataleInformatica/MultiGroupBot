@@ -40,3 +40,4 @@ $db->query(
 
 include_once "modules/reputation.php";
 include_once "modules/moderation.php";
+include_once "modules/welcome.php";
