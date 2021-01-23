@@ -9,7 +9,7 @@ class Database:
     FETCH_ONE = 1
     FETCH_ALL = 2
 
-    def __init__(self, create_tables=False):
+    def __init__(self):
         # Configuration values are inherited from environment variables
         self.conn = psycopg2.connect(
             f"host={os.environ.get('POSTGRES_HOST', '127.0.0.1')} "
@@ -18,43 +18,6 @@ class Database:
             f"dbname={os.environ.get('POSTGRES_DB', 'postgres')} "
         )
         self.c = self.conn.cursor()
-        if create_tables:
-            self._create_tables()
-
-    # Creates PostgreSQL tables
-    def _create_tables(self):
-        self.c.execute(
-            "CREATE TABLE IF NOT EXISTS users ("
-            "   user_id INTEGER PRIMARY KEY NOT NULL,"
-            "   first_name TEXT NOT NULL,"
-            "   last_name TEXT,"
-            "   username TEXT,"
-            "   reputation INTEGER DEFAULT 0 NOT NULL,"
-            "   warn_count INTEGER DEFAULT 0 NOT NULL,"
-            "   banned BOOLEAN DEFAULT false NOT NULL,"
-            "   permissions_level INTEGER DEFAULT 0 NOT NULL,"
-            "   last_seen TIMESTAMP DEFAULT NOW() NOT NULL"
-            ");"
-        )
-        self.c.execute(
-            "CREATE TABLE IF NOT EXISTS groups ("
-            "   group_id BIGINT PRIMARY KEY NOT NULL,"
-            "   title TEXT NOT NULL,"
-            "   invite_link TEXT,"
-            "   degree_name TEXT NOT NULL DEFAULT 'informatica',"
-            "   academic_year INTEGER NOT NULL DEFAULT 0,"
-            "   semester INTEGER NOT NULL DEFAULT 0"
-            ");"
-        )
-        self.c.execute(
-            "CREATE TABLE IF NOT EXISTS users_groups ("
-            "   user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,"
-            "   group_id BIGINT REFERENCES groups(group_id) ON DELETE CASCADE,"
-            "   last_seen TIMESTAMP DEFAULT now(),"
-            "   PRIMARY KEY(user_id, group_id)"
-            ");"
-        )
-        self.conn.commit()
 
     # Database cursor wrapper
     def exec(self, *args, **kwargs):
@@ -66,7 +29,7 @@ class Database:
             return self.c.fetchall()
 
     # Updates (or inserts, if not exists) the user information in the database
-    def update_user(self, user):
+    def update_user(self, user, chat):
         db_user = self.exec("SELECT 1 FROM users WHERE user_id=%s", (user.id, ), fetch=Database.FETCH_ONE)
         if not db_user:
             self.exec(
@@ -80,35 +43,12 @@ class Database:
                 "WHERE user_id = %s",
                 (user.first_name, user.last_name, user.username, user.id, )
             )
-
-    # Updates the group information in the database
-    # If the group is not in the database, it leaves
-    def update_group(self, chat, user):
-        db_group = self.exec("SELECT 1 FROM groups WHERE group_id=%s", (chat.id, ), fetch=Database.FETCH_ONE)
-        if not db_group:
-            chat.send(
-                "@admin gruppo non registrato. "
-                "Un amministratore deve registrarmi con /register. "
-                f"\n\n(Chat ID: <code>{chat.id}</code>)", syntax="html"
-            )
+        group_exists = self.exec("SELECT EXISTS(SELECT 1 FROM groups WHERE group_id=%s)",
+                                 (chat.id, ), fetch=Database.FETCH_ONE)
+        if not group_exists:
             return
-
-        self.exec(
-            "UPDATE groups SET title=%s WHERE group_id=%s",
-            (chat.title, chat.id, )
-        )
-        db_user_group = self.exec("SELECT 1 FROM users_groups WHERE user_id=%s AND group_id=%s",
-                                  (user.id, chat.id, ),
-                                  fetch=Database.FETCH_ONE)
-        if not db_user_group:
-            self.exec(
-                "INSERT INTO users_groups(user_id, group_id) VALUES(%s, %s)",
-                (user.id, chat.id, )
-            )
-        self.exec(
-            "UPDATE users_groups SET last_seen=NOW() WHERE user_id=%s AND group_id=%s",
-            (user.id, chat.id)
-        )
+        self.exec("INSERT INTO users_groups(user_id, group_id, last_seen) VALUES(%s, %s, NOW()) "
+                  "ON CONFLICT(user_id, group_id) DO UPDATE SET last_seen=NOW()", (user.id, chat.id, ))
 
     def get_rep(self, user):
         res = self.exec(
