@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6baaf38ff48a021d62196eb82712640f",
+    "content-hash": "2c2079437db55ed4f21e01226912906c",
     "packages": [
         {
             "name": "davtur19/turibot",

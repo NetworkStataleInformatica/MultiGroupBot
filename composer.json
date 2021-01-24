@@ -1,5 +1,8 @@
 {
+  "name": "studentiunimi/bot",
+  "description": "StudentiUnimi groups manager Telegram bot",
+  "license": "MIT",
   "require": {
-    "davtur19/turibot": "*"
+    "davtur19/turibot": "^1.7"
   }
 }
