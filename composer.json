@@ -2,6 +2,11 @@
   "name": "studentiunimi/bot",
   "description": "StudentiUnimi groups manager Telegram bot",
   "license": "MIT",
+  "config": {
+    "platform": {
+      "php": "7.4"
+    }
+  },
   "require": {
     "davtur19/turibot": "^1.7"
   }
