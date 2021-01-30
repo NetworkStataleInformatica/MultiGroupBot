@@ -30,7 +30,8 @@ $db->query(
     "INSERT INTO users(user_id, first_name, last_name, username, last_seen) 
     VALUES(:id, :fn, :ln, :un, NOW())
     ON CONFLICT(user_id) DO UPDATE SET first_name=:fn, last_name=:ln, username=:un, last_seen=NOW()",
-    ["id" => $sender->id, "fn" => $sender->first_name, "ln" => $sender->last_name, "un" => $sender->username]
+    ["id" => $sender->id, "fn" => $sender->first_name, "ln" => (isset($sender->last_name) ? $sender->last_name : null),
+        "un" => $sender->username]
 );
 $db->query(
     "INSERT INTO users_groups(user_id, group_id, last_seen) VALUES(:id, :gid, NOW())
