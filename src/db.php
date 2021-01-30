@@ -15,6 +15,11 @@ class Database {
             else
                 $q->bindValue($key, $value);
         $q->execute();
-        return $fetchall ? $q->fetchAll() : $q->fetch();
+        $res = $fetchall ? $q->fetchAll() : $q->fetch();
+        if (!$res) {
+            return [];
+        } else {
+            return $res;
+        }
     }
 }
