@@ -2,28 +2,26 @@
 include_once $_SERVER["DOCUMENT_ROOT"] . "/utils.php";
 
 global $client, $db;
-global $update, $sender, $chat;
+global $update, $message, $command, $sender, $chat;
 
-if (!isset($message->text) || !starts_with($message->text, "/network")) {
+if (!$command || !in_array($command->command, ["ban", "unban", "mute", "unmute"])) {
     return;
 }
+
 $db_sender = $db->query("SELECT permissions_level FROM users WHERE user_id=:id", ["id" => $sender->id]);
 if ($db_sender["permissions_level"] < 1) {
     return;
 }
-$command = explode(" ", substr($message->text, strlen("/network")));
-$action = $command[0];
+$action = $command->command;
 if (!in_array($action, ["ban", "unban", "mute", "unmute"])) {
     return;
 }
 
-$target = null;
 if (isset($message->reply_to_message)) {
     $target = $message->reply_to_message->from->id;
-} else if (count($command) > 1) {
-    $target = $command[1];
-}
-if ($target == null) {
+} else if (count($command->args) > 0) {
+    $target = $command->args[0];
+} else {
     return;
 }
 

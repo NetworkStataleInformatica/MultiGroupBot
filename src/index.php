@@ -1,5 +1,6 @@
 <?php
 include_once "../vendor/autoload.php";
+include_once "utils.php";
 
 if (!isset($_GET["token"])) {
     http_response_code(403);
@@ -38,6 +39,8 @@ $db->query(
     ON CONFLICT(user_id, group_id) DO UPDATE SET user_id=:id, group_id=:gid",
     ["id" => $sender->id, "gid" => $chat->id]
 );
+
+$command = parse_command($message);
 
 include_once "modules/reputation.php";
 include_once "modules/moderation.php";
